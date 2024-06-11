@@ -1,0 +1,12 @@
+/* This will override "styles.css" file */
+
+div.expanse-header, div.expanse-row{
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+div.expanse-header span, div.expanse-row span{
+    display: table-cell;
+    text-align: center;
+}

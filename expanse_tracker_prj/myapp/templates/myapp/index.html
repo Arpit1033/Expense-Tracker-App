@@ -1,0 +1,345 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+    {% comment %} Add Expenses {% endcomment %}
+    <div class="m-4 grid gap-2 sm:grid-cols-12">
+        <form id="myForm" class="sm:col-span-10 p-3 border border-gray-300 bg-gray-100 rounded flex flex-col sm:flex-row flex-wrap gap-2" method="post">
+            {% csrf_token %}
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="expense" class="block text-sm font-medium text-gray-700">Expense Name</label>
+                {{ expanseform.name }}
+            </div>
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                {{ expanseform.amount }}
+            </div>
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                {{ expanseform.category }}
+            </div>
+        </form>
+        <div class="sm:col-span-2 rounded flex items-center justify-center">
+            <button type="submit" form="myForm" class="bg-green-500 text-white py-2 px-4 rounded">Add</button>
+        </div>
+      </div>
+
+    {% comment %} Expenses {% endcomment %}
+    <div class="m-10 font-bold">Expenses 💵</div>
+    <div class="shadow-lg m-10 rounded-lg">
+        <div class="expanse-header flex-wrap space-x-40 px-20 py-5">
+            <span>Name</span>
+            <span>Amount</span>
+            <span>Category</span>
+            <span>Date</span>
+            <span>Edit</span>
+            <span>Delete</span>
+        </div>
+        <hr class="m-10">
+        {% for expanse in expanses %}
+        <div class="expanse-row flex-wrap px-20 py-5">
+            <span class="font-bold">{{ expanse.name }}</span>
+            <span class="font-bold">${{ expanse.amount|intcomma }}</span>
+            <span class="font-bold">{{ expanse.category }}</span>
+            <span class="font-bold">{{ expanse.date }}</span>
+            <span class="pl-24"><a href="{% url "edit" expanse.id %}">
+                <img class="h-5" src="{% static "myapp/images/edit_button.png" %}" alt="Edit">
+            </a></span>
+            <span class="pl-22">
+                <form method="post" action="{% url "delete" expanse.id %}">
+                    {% csrf_token %}
+                    {% comment %} We have to give name to this form as there are two POST methods on the same page, so it can cause some bugs {% endcomment %}
+                    <button type="submit" name="delete">
+                        <img class="h-5" src="{% static "myapp/images/delete_button.png" %}" alt="Delete">
+                    </button>
+                </form>
+            </span>
+        </div>
+        {% endfor %}
+        {% comment %} Displaying total amount {% endcomment %}
+        <div class="px-80 py-5">
+            <span class="font-bold text-green-500">
+                Total : ${{ total_expanses.amount__sum|intcomma }}
+            </span>
+        </div>
+    </div>
+    
+    <!-- For larger screens -->
+    <div class="m-4 p-5 bg-gray-100">
+        <h1 class="text-xl mb-2">Your expenses</h1>
+      
+        <div class="overflow-auto rounded-lg shadow hidden md:block">
+          <table class="w-full">
+            <thead class="bg-gray-50 border-b-2 border-gray-200">
+              <tr>
+                <th class="p-3 text-sm font-semibold tracking-wide text-left">Expense Description</th>
+                <th class="w-12 p-3 text-sm font-semibold tracking-wide text-left">Amount</th>
+                <th class="w-12 p-3 text-sm font-semibold tracking-wide text-left">Category</th>
+                <th class="w-12 p-3 text-sm font-semibold tracking-wide text-left">Date</th>
+                <th class="w-12 p-3 text-sm font-semibold tracking-wide text-left">Edit</th>
+                <th class="w-12 p-3 text-sm font-semibold tracking-wide text-left">Delete</th>
+              </tr>
+            </thead>
+            
+            <tbody class="divide-y divide-gray-100">
+            {% for expanse in expanses %}
+              <tr class="{% if forloop.counter|divisibleby:2 %} bg-gray-100 {% else %} bg-white {% endif %}">
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">{{ expanse.name }}</td>
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">${{ expanse.amount|intcomma }}</td>
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">{{ expanse.category }}</td>
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">{{ expanse.date }}</td>
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">
+                    <a href="{% url "edit" expanse.id %}">
+                        <button class="bg-blue-500 text-white py-1 px-2 rounded">Edit</button>
+                    </a>
+                </td>
+                <td class="whitespace-nowrap p-3 text-sm text-gray-700">
+                    <a href="{% url "delete" expanse.id %}">
+                        <button class="bg-red-500 text-white py-1 px-2 rounded">Delete</button>
+                    </a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+  
+            <tfoot class="w-full shadow">
+              <tr class="w-full">
+                <td colspan="4" class="p-3 text-center text-lg font-semibold">Total</td>
+                <td colspan="4" class="p-3 text-center text-lg font-semibold text-green-500">${{ total_expanses.amount__sum|intcomma }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+  
+        <!-- For smaller screens -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+          <div class="bg-white p-4 rounded-lg shadow space-y-3">
+            <div class="flex items-center space-x-2 text-sm">
+                <div>
+                  <a href="#" class="text-blue-500 font-bold hover:underline">10001</a>
+                </div>
+                <div class="text-gray-500">6/8/2024</div>
+                <div>
+                  <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
+                      Delivered
+                  </span>
+                </div>
+                <div class="text-sm text-gray-700">
+                  Classmate Notebook
+                </div>
+                <div class="text-sm font-medium text-black">$20</div>
+              </div>
+          </div>
+      
+          <div class="bg-white p-4 rounded-lg shadow space-y-3">
+            <div class="flex items-center space-x-2 text-sm">
+              <div>
+                  <a href="#" class="text-blue-500 font-bold hover:underline">10002</a>
+              </div>
+              <div class="text-gray-500">6/8/2024</div>
+              <div>
+                <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">
+                    Shipped
+                </span>
+              </div>
+              <div class="text-sm text-gray-700">
+                Cello Pen
+              </div>
+              <div class="text-sm font-medium text-black">$10</div>
+            </div>
+          </div>
+      
+          <div class="bg-white p-4 rounded-lg shadow space-y-3">
+            <div class="flex items-center space-x-2 text-sm">
+              <div>
+                <a href="#" class="text-blue-500 font-bold hover:underline">10003</a>
+              </div>
+              <div class="text-gray-500">6/8/2024</div>
+              <div>
+                <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-red-800 bg-red-200 rounded-lg bg-opacity-50">
+                    Cancelled
+                </span>
+              </div>
+              <div class="text-sm text-gray-700">
+                iPhone 15 Pro Max
+              </div>
+              <div class="text-sm font-medium text-black">$250</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% comment %} Weekly, Monthly and Yearly Expenses {% endcomment %}
+    <div class="flex">
+        <div class="shadow-lg ml-10 rounded-lg">
+            <h1 class="ml-10 font-bold text-gray-500">Last 365 days</h1>
+            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ yearly_sum.amount__sum|intcomma }}</h1>
+        </div>
+
+        <div class="shadow-lg ml-10 rounded-lg">
+            <h1 class="ml-10 font-bold text-gray-500">Last 30 days</h1>
+            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ monthly_sum.amount__sum|intcomma }}</h1>
+        </div>
+
+        <div class="shadow-lg ml-10 rounded-lg">
+            <h1 class="ml-10 font-bold text-gray-500">Last 7 days</h1>
+            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ weekly_sum.amount__sum|intcomma }}</h1>
+        </div>
+    </div>
+    <div class="flex">
+        <div class="w-1/2 shadow-lg m-10">
+            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+                <span>Past 30 days sum expenses</span>
+            </div>
+            <hr>
+            <div id="30-day-table">
+                {% for daily_sum in daily_sums %}
+                    <div class="flex flex-wrap px-20 py-5">
+                        <span>
+                            {{ daily_sum.date }}
+                        </span>
+                    </div>
+                    <div class="flex felx-wrap px-20 py-5">
+                        <span class="text-green-500">
+                            ${{ daily_sum.sum }}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="w-1/2 shadow-lg m-10">
+            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+                <span>Categorical expenses</span>
+            </div>
+            <hr>
+            <div id="cat-sum-table">
+                {% for categorical_sum in categorical_sums %}
+                    <div class="flex flex-wrap px-20 py-5">
+                        <span>
+                            {{ categorical_sum.category }}
+                        </span>
+                    </div>
+                    <div class="flex felx-wrap px-20 py-5">
+                        <span class="text-green-500">
+                            ${{ categorical_sum.sum }}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% comment %} Expense Charts using chart.js {% endcomment %}
+    <div class="flex">
+        <div class="w-1/2 shadow-lg ml-10">
+            <h1 class="m-10">Expense Spread Across Categories</h1>
+            <canvas id="myChart" class="m-10"></canvas>
+        </div>
+        <div class="w-1/2 shadow-lg ml-10">
+            <h1 class="m-10">Daily Expense Sum</h1>
+            <canvas id="myChart1" class="m-10"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+    <script>
+        const cats = []
+        const cat_sums = []
+
+        const catSumDiv = document.getElementById('cat-sum-table').getElementsByTagName('div')
+        for (let i = 0; i < catSumDiv.length; i++) {
+            if(i & 1){
+                cat_sums.push(catSumDiv[i].innerText.replace('$', ''))
+            }
+            else{
+                cats.push(catSumDiv[i].innerText)
+            }
+        }
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: cats,
+                datasets: [{
+                    label: 'Expense Spread Across Categories',
+                    data: cat_sums,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const dates = []
+        const sums = []
+
+        const dailySumDiv = document.getElementById('30-day-table').getElementsByTagName('div')
+        for (let i = 0; i < dailySumDiv.length; i++) {
+            if(i & 1){
+                sums.push(dailySumDiv[i].innerText.replace('$', ''))
+            }
+            else{
+                dates.push(dailySumDiv[i].innerText)
+            }
+        }
+
+        var ctx1 = document.getElementById('myChart1').getContext('2d');
+        var myChart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Sum of Daily Expenses',
+                    data: sums,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock body %}
