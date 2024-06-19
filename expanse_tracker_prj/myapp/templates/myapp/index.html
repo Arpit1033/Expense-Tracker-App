@@ -25,45 +25,6 @@
       </div>
 
     {% comment %} Expenses {% endcomment %}
-    <div class="m-10 font-bold">Expenses 💵</div>
-    <div class="shadow-lg m-10 rounded-lg">
-        <div class="expanse-header flex-wrap space-x-40 px-20 py-5">
-            <span>Name</span>
-            <span>Amount</span>
-            <span>Category</span>
-            <span>Date</span>
-            <span>Edit</span>
-            <span>Delete</span>
-        </div>
-        <hr class="m-10">
-        {% for expanse in expanses %}
-        <div class="expanse-row flex-wrap px-20 py-5">
-            <span class="font-bold">{{ expanse.name }}</span>
-            <span class="font-bold">${{ expanse.amount|intcomma }}</span>
-            <span class="font-bold">{{ expanse.category }}</span>
-            <span class="font-bold">{{ expanse.date }}</span>
-            <span class="pl-24"><a href="{% url "edit" expanse.id %}">
-                <img class="h-5" src="{% static "myapp/images/edit_button.png" %}" alt="Edit">
-            </a></span>
-            <span class="pl-22">
-                <form method="post" action="{% url "delete" expanse.id %}">
-                    {% csrf_token %}
-                    {% comment %} We have to give name to this form as there are two POST methods on the same page, so it can cause some bugs {% endcomment %}
-                    <button type="submit" name="delete">
-                        <img class="h-5" src="{% static "myapp/images/delete_button.png" %}" alt="Delete">
-                    </button>
-                </form>
-            </span>
-        </div>
-        {% endfor %}
-        {% comment %} Displaying total amount {% endcomment %}
-        <div class="px-80 py-5">
-            <span class="font-bold text-green-500">
-                Total : ${{ total_expanses.amount__sum|intcomma }}
-            </span>
-        </div>
-    </div>
-    
     <!-- For larger screens -->
     <div class="m-4 p-5 bg-gray-100">
         <h1 class="text-xl mb-2">Your expenses</h1>
@@ -94,9 +55,10 @@
                     </a>
                 </td>
                 <td class="whitespace-nowrap p-3 text-sm text-gray-700">
-                    <a href="{% url "delete" expanse.id %}">
-                        <button class="bg-red-500 text-white py-1 px-2 rounded">Delete</button>
-                    </a>
+                    <form action="{% url "delete" expanse.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="bg-red-500 text-white py-1 px-2 rounded" type="submit" name="delete">Delete</button>
+                    </form>
                 </td>
               </tr>
             {% endfor %}
@@ -170,23 +132,23 @@
       </div>
 
     {% comment %} Weekly, Monthly and Yearly Expenses {% endcomment %}
-    <div class="flex">
-        <div class="shadow-lg ml-10 rounded-lg">
-            <h1 class="ml-10 font-bold text-gray-500">Last 365 days</h1>
-            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ yearly_sum.amount__sum|intcomma }}</h1>
+    <div class="m-4 grid gap-2 sm:grid-cols-3">
+        <div class="bg-red-500 flex flex-col items-center justify-center">
+            <div class="text-lg font-semibold">Last 365 days</div>
+            <div class="text-lg font-semibold">${{ yearly_sum.amount__sum|intcomma }}</div>
         </div>
-
-        <div class="shadow-lg ml-10 rounded-lg">
-            <h1 class="ml-10 font-bold text-gray-500">Last 30 days</h1>
-            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ monthly_sum.amount__sum|intcomma }}</h1>
+        <div class="bg-green-500 flex flex-col items-center justify-center">
+            <div class="text-lg font-semibold">Last 30 days</div>
+            <div class="text-lg font-semibold">${{ monthly_sum.amount__sum|intcomma }}</div>
         </div>
-
-        <div class="shadow-lg ml-10 rounded-lg">
-            <h1 class="ml-10 font-bold text-gray-500">Last 7 days</h1>
-            <h1 class="ml-10 my-5 text-2xl text-green-500 font-bold">${{ weekly_sum.amount__sum|intcomma }}</h1>
+        <div class="bg-blue-500 flex flex-col items-center justify-center">
+            <div class="text-lg font-semibold">Last 7 days</div>
+            <div class="text-lg font-semibold">${{ weekly_sum.amount__sum|intcomma }}</div>
         </div>
     </div>
-    <div class="flex">
+
+    {% comment %} More detailed analysis of expanses {% endcomment %}
+    {% comment %} <div class="flex">
         <div class="w-1/2 shadow-lg m-10">
             <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
                 <span>Past 30 days sum expenses</span>
@@ -228,10 +190,32 @@
                 {% endfor %}
             </div>
         </div>
+    </div> {% endcomment %}
+
+    {% comment %} More detailed analysis of expanses {% endcomment %}
+    <div class="m-4 mt-6 grid sm:grid-cols-2 gap-4 h-fit">
+        <div class="shadow flex flex-col h-full">
+            <div class="text-lg font-bold shadow text-center bg-red-500 h-12 flex items-center justify-center">Past 30 days sum expenses</div>
+            <div id="30-day-table" class="grid sm:grid-cols-2">
+                {% for daily_sum in daily_sums %}
+                    <div class="flex items-center justify-center h-10 border-r">{{ daily_sum.date }}</div>
+                    <div class="flex items-center justify-center h-10 border-l">${{ daily_sum.sum }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="shadow flex flex-col h-full">
+            <div class="text-lg font-bold shadow text-center bg-red-500 h-12 flex items-center justify-center">Categorical expenses</div>
+            <div id="cat-sum-table" class="grid sm:grid-cols-2">
+                {% for categorical_sum in categorical_sums %}
+                    <div class="flex items-center justify-center h-10 border-r">{{ categorical_sum.category }}</div>
+                    <div class="flex items-center justify-center h-10 border-l">${{ categorical_sum.sum }}</div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     {% comment %} Expense Charts using chart.js {% endcomment %}
-    <div class="flex">
+    {% comment %} <div class="flex">
         <div class="w-1/2 shadow-lg ml-10">
             <h1 class="m-10">Expense Spread Across Categories</h1>
             <canvas id="myChart" class="m-10"></canvas>
@@ -240,8 +224,25 @@
             <h1 class="m-10">Daily Expense Sum</h1>
             <canvas id="myChart1" class="m-10"></canvas>
         </div>
+    </div> {% endcomment %}
+
+    {% comment %} Expense Charts using chart.js {% endcomment %}
+    <div class="m-4 grid sm:grid-cols-2 gap-4 h-fit">
+        <div class="flex flex-col items-center justify-center shadow">
+            <div class="border-b w-full flex items-center justify-center h-12">Expense Spread Across Categories</div>
+            <div class="w-full flex items-center justify-center">
+                <canvas class="w-full flex items-center justify-center" id="myChart"></canvas>
+            </div>
+        </div>
+        <div class="flex flex-col items-center justify-center shadow">
+            <div class="border-b w-full flex items-center justify-center h-12">Daily Expense Sum</div>
+            <div class="w-full flex items-center justify-center">
+                <canvas class="w-full flex items-center justify-center" id="myChart1"></canvas>
+            </div>
+        </div>
     </div>
 
+    {% comment %} Javascript {% endcomment %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
     <script>
         const cats = []
