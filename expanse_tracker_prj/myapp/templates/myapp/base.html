@@ -83,7 +83,7 @@
                             {% if profile %}
                             <img class="h-8 w-8 rounded-full" src="{{ profile.photo.url }}" alt="Profile Picture">
                             {% else %}
-                            <img src="{{ MEDIA_URL }} default.jpg" alt="Profile Picture">
+                            <img class="h-8 w-8 rounded-full" src="{{ MEDIA_URL }}default.jpg" alt="Profile Picture">
                             {% endif %}
                         </button>
                         </div>
