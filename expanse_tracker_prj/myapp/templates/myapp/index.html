@@ -64,17 +64,17 @@
             {% endfor %}
             </tbody>
   
-            <tfoot class="w-full shadow">
+            {% comment %} <tfoot class="w-full shadow">
               <tr class="w-full">
                 <td colspan="4" class="p-3 text-center text-lg font-semibold">Total</td>
                 <td colspan="4" class="p-3 text-center text-lg font-semibold text-green-500">${{ total_expanses.amount__sum|intcomma }}</td>
               </tr>
-            </tfoot>
+            </tfoot> {% endcomment %}
           </table>
         </div>
   
         <!-- For smaller screens -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+        {% comment %} <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
           <div class="bg-white p-4 rounded-lg shadow space-y-3">
             <div class="flex items-center space-x-2 text-sm">
                 <div>
@@ -129,7 +129,37 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> {% endcomment %}
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+        {% for expanse in expanses %}
+        <div class="bg-white p-4 rounded-lg shadow space-y-3">
+            <div class="flex items-center space-x-2 text-sm">
+                <div class="text-sm text-gray-700">{{ expanse.name }}</div>
+                <div class="text-sm font-medium text-black">${{ expanse.amount|intcomma }}</div>
+            </div>
+            <div class="text-gray-500">{{ expanse.date }}</div>
+            <div class="text-sm text-gray-700">{{ expanse.category }}</div>
+            <div class="flex items-center space-x-2 text-sm">
+                <a href="{% url 'edit' expanse.id %}">
+                    <button class="bg-blue-500 text-white py-1 px-2 rounded">Edit</button>
+                </a>
+                <form action="{% url 'delete' expanse.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="bg-red-500 text-white py-1 px-2 rounded" type="submit" name="delete">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Total Expense-->
+    <div class="bg-white p-4 rounded-lg shadow space-y-3 mt-2">
+        <div class="flex justify-between text-lg font-semibold">
+            <div>Total</div>
+            <div class="text-green-500">${{ total_expanses.amount__sum|intcomma }}</div>
+        </div>
+    </div>
 
     {% comment %} Weekly, Monthly and Yearly Expenses {% endcomment %}
     <div class="m-4 grid gap-2 sm:grid-cols-3">
