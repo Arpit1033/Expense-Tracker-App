@@ -63,74 +63,10 @@
               </tr>
             {% endfor %}
             </tbody>
-  
-            {% comment %} <tfoot class="w-full shadow">
-              <tr class="w-full">
-                <td colspan="4" class="p-3 text-center text-lg font-semibold">Total</td>
-                <td colspan="4" class="p-3 text-center text-lg font-semibold text-green-500">${{ total_expanses.amount__sum|intcomma }}</td>
-              </tr>
-            </tfoot> {% endcomment %}
           </table>
         </div>
   
-        <!-- For smaller screens -->
-        {% comment %} <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
-          <div class="bg-white p-4 rounded-lg shadow space-y-3">
-            <div class="flex items-center space-x-2 text-sm">
-                <div>
-                  <a href="#" class="text-blue-500 font-bold hover:underline">10001</a>
-                </div>
-                <div class="text-gray-500">6/8/2024</div>
-                <div>
-                  <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                      Delivered
-                  </span>
-                </div>
-                <div class="text-sm text-gray-700">
-                  Classmate Notebook
-                </div>
-                <div class="text-sm font-medium text-black">$20</div>
-              </div>
-          </div>
-      
-          <div class="bg-white p-4 rounded-lg shadow space-y-3">
-            <div class="flex items-center space-x-2 text-sm">
-              <div>
-                  <a href="#" class="text-blue-500 font-bold hover:underline">10002</a>
-              </div>
-              <div class="text-gray-500">6/8/2024</div>
-              <div>
-                <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50">
-                    Shipped
-                </span>
-              </div>
-              <div class="text-sm text-gray-700">
-                Cello Pen
-              </div>
-              <div class="text-sm font-medium text-black">$10</div>
-            </div>
-          </div>
-      
-          <div class="bg-white p-4 rounded-lg shadow space-y-3">
-            <div class="flex items-center space-x-2 text-sm">
-              <div>
-                <a href="#" class="text-blue-500 font-bold hover:underline">10003</a>
-              </div>
-              <div class="text-gray-500">6/8/2024</div>
-              <div>
-                <span class="p-1.5 text-xs font-medium uppercase tracking-wider text-red-800 bg-red-200 rounded-lg bg-opacity-50">
-                    Cancelled
-                </span>
-              </div>
-              <div class="text-sm text-gray-700">
-                iPhone 15 Pro Max
-              </div>
-              <div class="text-sm font-medium text-black">$250</div>
-            </div>
-          </div>
-        </div>
-      </div> {% endcomment %}
-
+    <!-- For smaller screens -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
         {% for expanse in expanses %}
         <div class="bg-white p-4 rounded-lg shadow space-y-3">
@@ -178,51 +114,6 @@
     </div>
 
     {% comment %} More detailed analysis of expanses {% endcomment %}
-    {% comment %} <div class="flex">
-        <div class="w-1/2 shadow-lg m-10">
-            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
-                <span>Past 30 days sum expenses</span>
-            </div>
-            <hr>
-            <div id="30-day-table">
-                {% for daily_sum in daily_sums %}
-                    <div class="flex flex-wrap px-20 py-5">
-                        <span>
-                            {{ daily_sum.date }}
-                        </span>
-                    </div>
-                    <div class="flex felx-wrap px-20 py-5">
-                        <span class="text-green-500">
-                            ${{ daily_sum.sum }}
-                        </span>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="w-1/2 shadow-lg m-10">
-            <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
-                <span>Categorical expenses</span>
-            </div>
-            <hr>
-            <div id="cat-sum-table">
-                {% for categorical_sum in categorical_sums %}
-                    <div class="flex flex-wrap px-20 py-5">
-                        <span>
-                            {{ categorical_sum.category }}
-                        </span>
-                    </div>
-                    <div class="flex felx-wrap px-20 py-5">
-                        <span class="text-green-500">
-                            ${{ categorical_sum.sum }}
-                        </span>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div> {% endcomment %}
-
-    {% comment %} More detailed analysis of expanses {% endcomment %}
     <div class="m-4 mt-6 grid sm:grid-cols-2 gap-4 h-fit">
         <div class="shadow flex flex-col h-full">
             <div class="text-lg font-bold shadow text-center bg-red-500 h-12 flex items-center justify-center">Past 30 days sum expenses</div>
@@ -243,18 +134,6 @@
             </div>
         </div>
     </div>
-
-    {% comment %} Expense Charts using chart.js {% endcomment %}
-    {% comment %} <div class="flex">
-        <div class="w-1/2 shadow-lg ml-10">
-            <h1 class="m-10">Expense Spread Across Categories</h1>
-            <canvas id="myChart" class="m-10"></canvas>
-        </div>
-        <div class="w-1/2 shadow-lg ml-10">
-            <h1 class="m-10">Daily Expense Sum</h1>
-            <canvas id="myChart1" class="m-10"></canvas>
-        </div>
-    </div> {% endcomment %}
 
     {% comment %} Expense Charts using chart.js {% endcomment %}
     <div class="m-4 grid sm:grid-cols-2 gap-4 h-fit">
