@@ -1,38 +1,23 @@
 {% extends "myapp/base.html" %}
 {% block body %}
-    <form method="post" class="shadow-lg m-10">
-        {% csrf_token %}
-        <div class="px-10 py-10 flex">
-            <div class="mx-10">
-                <div class="mb-5">
-                    <label class="font-semibold">Expanse Name</label>
-                </div>
-                <div class="border p-1">
-                    {{ expanse_form.name }}
-                </div>
+    <div class="m-4 grid gap-2 sm:grid-cols-12">
+        <form id="edit_form" class="sm:col-span-10 p-3 border border-gray-300 bg-gray-100 rounded flex flex-col sm:flex-row flex-wrap gap-2" method="post">
+            {% csrf_token %}
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="expense" class="block text-sm font-medium text-gray-700">Expense Name</label>
+                {{ expanse_form.name }}
             </div>
-
-            <div class="mx-10">
-                <div class="mb-5">
-                    <label class="font-semibold">Expanse Amount</label>
-                </div>
-                <div class="border p-1">
-                    {{ expanse_form.amount }}
-                </div>
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="amount" class="block text-sm font-medium text-gray-700">Expense Amount</label>
+                {{ expanse_form.amount }}
             </div>
-
-            <div class="mx-10">
-                <div class="mb-5">
-                    <label class="font-semibold">Expanse Category</label>
-                </div>
-                <div class="border p-1">
-                    {{ expanse_form.category }}
-                </div>
+            <div class="w-full sm:w-auto flex-auto">
+                <label for="category" class="block text-sm font-medium text-gray-700">Expense Category</label>
+                {{ expanse_form.category }}
             </div>
+        </form>
+        <div class="sm:col-span-2 rounded flex items-center justify-center">
+            <button type="submit" form="edit_form" class="bg-green-500 text-white py-2 px-4 rounded">Edit</button>
         </div>
-
-        <div class="mx-10 mt-10">
-            <button class="bg-green-500 px-5 py-2 text-white font-bold" type="submit">Edit</button>
-        </div>
-    </form>
+      </div>
 {% endblock body %}
